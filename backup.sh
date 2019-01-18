@@ -18,7 +18,7 @@ zip -r servers/$world/backups/current/world.zip servers/$world/backups/current/w
 
 # render overviewer
 screen -S $world -X stuff '/say Overviewer Started: Will be available soon'$(echo -ne '\015')
-overviewer.py servers/$world/backups/current/wold servers/$world/backups/current/
+overviewer.py servers/$world/backups/current/world servers/$world/backups/current/
 screen -S $world -X stuff '/say Overviewer Finished: See it on the website'$(echo -ne '\015')
 
 today=$(TZ=":US/Mountain" $(date +"%Y-%m-%d"))
