@@ -1,0 +1,14 @@
+[
+  {
+    "uuid": "cf55f748-3ccf-4a2d-9354-f4dc6d6efbbd",
+    "name": "Creoix",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  },
+  {
+    "uuid": "d6f00afb-aa74-448b-ad18-1fad135aef2f",
+    "name": "Assimilater",
+    "level": 4,
+    "bypassesPlayerLimit": false
+  }
+]
