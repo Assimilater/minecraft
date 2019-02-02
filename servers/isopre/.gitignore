@@ -1,4 +1,7 @@
 logs
 backups
+crash-reports
 minecraft_server.jar
 isopre
+*.log
+usercache.json

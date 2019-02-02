@@ -1,8 +1,10 @@
 #!/bin/bash
 
 worlds=$(find servers/* -maxdepth 0 -type d)
-for world in $worlds
+for world_dir in $worlds
 do
+world=${world_dir#*/}
+echo 'Doing backup for '$(echo $world)
 
 # copy the world
 screen -S $world -X stuff '/say Backup Started: World saving temporarily disabled'$(echo -ne '\015')
@@ -18,7 +20,7 @@ zip -r servers/$world/backups/current/world.zip servers/$world/backups/current/w
 
 # render overviewer
 screen -S $world -X stuff '/say Overviewer Started: Will be available soon'$(echo -ne '\015')
-overviewer.py servers/$world/backups/current/world servers/$world/backups/current/
+overviewer.py --rendermodes=smooth-lighting servers/$world/backups/current/world servers/$world/backups/current/overviewer
 screen -S $world -X stuff '/say Overviewer Finished: See it on the website'$(echo -ne '\015')
 
 today=$(TZ=":US/Mountain" $(date +"%Y-%m-%d"))
