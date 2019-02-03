@@ -44,7 +44,7 @@ main {
 	background-color: black;
 	flex: 1;
 }
-main iframe#overviewer-body {
+main iframe#overviewer-view {
 	width: 100%;
 	height: 100%;
 	border-style: solid;
@@ -94,7 +94,7 @@ footer a {
 </header>
 
 <main>
-	<iframe id="overviewer-body"></iframe>
+	<iframe id="overviewer-view"></iframe>
 </main>
 
 <footer class="ui-widget-content">
@@ -150,11 +150,21 @@ $(document).ready(function() {
 		updateSelection();
 	});
 
+	var navigate = function(prefix) {
+		updateSelection();
+		var url = prefix + selected.server + '/' + selected.period + '/';
+		if (selected.datets && selected.datets.length > 0) {
+			url += selected.datets + '/';
+		}
+		console.log(url);
+		$('#overviewer-view').attr('src', url);
+	};
+
 	$('#download').button().click(function() {
-		console.log('download');
+		navigate('/downloader/');
 	});
 	$('#overviewer-load').button().click(function() {
-		console.log('overviewer');
+		navigate('/overviewer/');
 	});
 
 	$('#loading').show();

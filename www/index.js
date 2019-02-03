@@ -44,7 +44,7 @@ app.get('/fetch', (req, res) => {
 	res.json(info);
 });
 
-app.get('/download/:server/:period/:date?', (req, res) => {
+app.get('/downloader/:server/:period/:date?', (req, res) => {
 	var date = req.params['date'] || "";
 	if (date !== "") {
 		date += '/';
