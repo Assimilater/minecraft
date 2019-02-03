@@ -3,13 +3,13 @@
 world="$1"
 
 # ensure all requisite directories exist
-mdir -p servers
-mdir -p servers/$world
-mdir -p servers/$world/backups
-mdir -p servers/$world/backups/current
-mdir -p servers/$world/backups/daily
-mdir -p servers/$world/backups/weekly
-mdir -p servers/$world/backups/monthly
+mkdir -p servers
+mkdir -p servers/$world
+mkdir -p servers/$world/backups
+mkdir -p servers/$world/backups/current
+mkdir -p servers/$world/backups/daily
+mkdir -p servers/$world/backups/weekly
+mkdir -p servers/$world/backups/monthly
 
 # setup server.properties
 
