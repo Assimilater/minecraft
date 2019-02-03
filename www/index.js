@@ -66,8 +66,8 @@ app.get('/overviewer/:server/:period/:date?/*', (req, res) => {
 		date += '/';
 	}
 
-	var file = util.format('%s/%s/backups/%s/%s%s',
-		mcsroot, req.params['server'], req.params['period'], date, path);
+	var file = util.format('%s/%s/backups/%s/%s%s/%s',
+		mcsroot, req.params['server'], req.params['period'], date, 'overviewer', path);
 
 	console.log(util.format("sending file: %s", file));
 
