@@ -1,15 +1,18 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 	<meta charset="utf-8">
 	<title>Minecraft Viewer</title>
 	<meta name="description" content="Minecraft Backup and Overviewer">
 	<meta name="author"      content="https://github.com/Assimilater">
-	
+
 	<!-- jquery with jquery ui with ui darkness theme -->
 	<script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="//code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
 	<link  href="//code.jquery.com/ui/1.12.1/themes/ui-darkness/jquery-ui.css" rel="stylesheet" type="text/css" />
+
+	<!-- css needs to be done before the body, javascript at the end of the body for convenience -->
 <style>
 * {
 	margin: 0;
@@ -27,6 +30,12 @@ header, footer {
 }
 header fieldset {
 	border: 0;
+	display: flex;
+	padding: 5px;
+}
+header fieldset > div {
+	display: inline-block;
+	flex: 1;
 }
 header label {
 	margin: 30px 0 0 0;
@@ -45,63 +54,137 @@ main iframe#overviewer-body {
 footer a {
 	color: blue;
 }
+.invisible {
+	visibility: hidden;
+}
 </style>
+
 </head>
 
 <body>
+
 <header class="ui-widget-content">
-<label id="loading">Loading...</label>
-<fieldset id="overviewer-controller">
-	<label for="server">Server:</label>
-	<select name="server" id="server">
-	</select>
-	<label for="period">Period:</label>
-	<select name="period" id="period">
-		<option selected="selected">Current</option>
-		<option>Daily</option>
-		<option>Weekly</option>
-		<option>Monthly</option>
-	</select>
-	<label for="date">Date:</label>
-	<select name="date" id="date">
-	</select>
-	<button id="download">Download</button>
-	<button id="overviewer-load">Overviewer</button>
-</fieldset>
-<div id="overviewer-title"></div>
+	<label id="loading">Loading...</label>
+	<fieldset id="overviewer-controller">
+		<div>
+			<label for="server">Server:</label>
+			<select name="server" id="server">
+			</select>
+		</div>
+		<div>
+			<label for="period">Period:</label>
+			<select name="period" id="period">
+				<option value="current" selected="selected">Current</option>
+				<option value="daily">Daily</option>
+				<option value="weekly">Weekly</option>
+				<option value="monthly">Monthly</option>
+			</select>
+		</div>
+		<div class="invisible">
+			<label for="datets">Date:</label>
+			<select name="datets" id="datets">
+			</select>
+		</div>
+		<div>
+			<button id="download">Download</button>
+			<button id="overviewer-load">Overviewer</button>
+		</div>
+	</fieldset>
+	<div id="overviewer-title"></div>
 </header>
+
 <main>
-<iframe id="overviewer-body"></iframe>
+	<iframe id="overviewer-body"></iframe>
 </main>
+
 <footer class="ui-widget-content">
-<a href="https://github.com/Assimilater/minecraft">Github</a>
+	<a href="https://github.com/Assimilater/minecraft">Github</a>
 </footer>
+
 <script>
 $(document).ready(function() {
-	var isCur = true;
-	$("#server").selectmenu().on("selectmenuchange", function(event, ui) {
-	}).hide();
-	$("#period").selectmenu().on("selectmenuchange", function(event, ui) {
-	}).hide();
-	$("#date").selectmenu().on("selectmenuchange", function(event, ui) {
-		console.log("triggerd");
-	}).hide();
-	$("#download").button().click(function() {
-		console.log("download");
+	var servers = {};
+	var selected = {
+		server: '',
+		period: 'current',
+		datets: '',
+	};
+
+	var updateSelection = function() {
+		selected.server = $('#server').val();
+		selected.period = $('#period').val();
+		selected.datets = $('#datets').val();
+	};
+
+	var updateDates = function() {
+		var fill =
+			selected.period !== 'current' &&
+			selected.period !== '' &&
+			selected.server !== '';
+
+		console.log('fill: ', fill);
+		console.log('selected: ', selected);
+
+		$('#datets').html('');
+		if (fill) {
+			servers[selected.server][selected.period].forEach(function(datets) {
+				$('#datets').append($('<option>', {
+					value: datets,
+					text: datets,
+				}));
+			});
+		}
+		$('#datets').selectmenu('refresh');
+		$('#datets').closest('div').toggleClass('invisible', !fill);
+	};
+
+	$('#server').selectmenu().on('selectmenuchange', function(event, ui) {
+		updateSelection();
+		updateDates();
 	});
-	$("#overviewer-load").button().click(function() {
-		console.log("overviewer");
+	$('#period').selectmenu().on('selectmenuchange', function(event, ui) {
+		updateSelection();
+		updateDates();
 	});
-	$("#overviewer-controller").hide();
-	$("#loading").show();
+	$('#datets').selectmenu().on('selectmenuchange', function(event, ui) {
+		updateSelection();
+	});
+
+	$('#download').button().click(function() {
+		console.log('download');
+	});
+	$('#overviewer-load').button().click(function() {
+		console.log('overviewer');
+	});
+
+	$('#loading').show();
+	$('#overviewer-controller').hide();
 	$.ajax({
-		dataType: "json",
-		url: "/fetch",
-		success: function() {
-			
+		dataType: 'json',
+		url: '/fetch',
+		success: function(data) {
+			servers = data;
+			console.log('servers: ', servers);
+
+			$('#server').html('');
+			Object.keys(servers).forEach(function(server) {
+				$('#server').append($('<option>', {
+					value: server,
+					text: server,
+				}));
+			});
+			$('#server').selectmenu('refresh');
+
+			updateSelection();
+			updateDates();
+
+			$('#overviewer-controller').show();
+			$('#loading').hide();
 		}
 	});
 });
 </script>
+
 </body>
+
 </html>

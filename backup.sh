@@ -16,16 +16,18 @@ screen -S $world -X stuff '/say Backup Finished: World saving enabled again'$(ec
 
 # zip the backup
 rm -f servers/$world/backups/current/world.zip
-zip -r servers/$world/backups/current/world.zip servers/$world/backups/current/world/
+zip -r servers/$world/backups/current/world.zip servers/$world/backups/current/world/ >/dev/null
 
 # render overviewer
 screen -S $world -X stuff '/say Overviewer Started: Will be available soon'$(echo -ne '\015')
 overviewer.py --rendermodes=smooth-lighting servers/$world/backups/current/world servers/$world/backups/current/overviewer
 screen -S $world -X stuff '/say Overviewer Finished: See it on the website'$(echo -ne '\015')
 
-today=$(TZ=":US/Mountain" $(date +"%Y-%m-%d"))
+today=$(TZ=":US/Mountain" date +"%Y-%m-%d")
 dom=$(TZ=":US/Mountain" date '+%d')
 dow=$(TZ=":US/Mountain" date '+%u')
+
+echo 'Using timestamp: '$(echo $today)
 
 # Preapre daily variables trims all but the latest 2 dailies (we're about to add a 3rd)
 dbs=$(find servers/$world/backups/daily/* -maxdepth 0 -type d | wc -l)
