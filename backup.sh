@@ -4,19 +4,24 @@ worlds=$(find servers/* -maxdepth 0 -type d)
 for world_dir in $worlds
 do
 world=${world_dir#*/}
+
+# Debug info
 echo 'Doing backup for '$(echo $world)
 
 # copy the world
 screen -S $world -X stuff '/say Backup Started: World saving temporarily disabled'$(echo -ne '\015')
 screen -S $world -X stuff '/save-off'$(echo -ne '\015')
 screen -S $world -X stuff '/save-all'$(echo -ne '\015')
-cp -rpf servers/$world/$world servers/$world/backups/current/world
+cp -rpfT servers/$world/$world/ servers/$world/backups/current/world/
 screen -S $world -X stuff '/save-on'$(echo -ne '\015')
 screen -S $world -X stuff '/say Backup Finished: World saving enabled again'$(echo -ne '\015')
 
+# Debug info
+#ls servers/$world/backups/current/world/
+
 # zip the backup
 rm -f servers/$world/backups/current/world.zip
-zip -r servers/$world/backups/current/world.zip servers/$world/backups/current/world/ >/dev/null
+(cd servers/$world/backups/current/world && zip -r ../world.zip ./* >/dev/null)
 
 # render overviewer
 screen -S $world -X stuff '/say Overviewer Started: Will be available soon'$(echo -ne '\015')
@@ -27,7 +32,8 @@ today=$(TZ=":US/Mountain" date +"%Y-%m-%d")
 dom=$(TZ=":US/Mountain" date '+%d')
 dow=$(TZ=":US/Mountain" date '+%u')
 
-echo 'Using timestamp: '$(echo $today)
+# Debug info
+#echo 'Using timestamp: '$(echo $today)
 
 # Preapre daily variables trims all but the latest 2 dailies (we're about to add a 3rd)
 dbs=$(find servers/$world/backups/daily/* -maxdepth 0 -type d | wc -l)
